@@ -29,9 +29,13 @@ extension Magazine: UICollectionViewDataSource {
   public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let controller = sections[indexPath.section].items[indexPath.item]
     switch controller.cellProvider {
-    case .static(let cell):
+    case .staticCell(let cell):
       return cell
-    case .dequeued(let identifier, let handler):
+    case .staticView(let view, let identifier):
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! StaticMagazineCell
+      cell.view = view
+      return cell
+    case .reusable(let identifier, let handler):
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! MagazineCell
       handler(cell, indexPath)
       return cell

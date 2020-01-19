@@ -136,11 +136,12 @@ public struct ItemController {
 
 public enum ItemCellProvider {
   
-  case `static`(MagazineCell)
-  case dequeued(identifier: String, (MagazineCell, IndexPath) -> Void)
+  case staticCell(MagazineCell)
+  case staticView(UIView, identifier: String = String(describing: StaticMagazineCell.self))
+  case reusable(identifier: String, (MagazineCell, IndexPath) -> Void)
   
-  public static func dequeued<Cell>(_ cellClass: Cell.Type, handler: @escaping (Cell, IndexPath) -> Void) -> ItemCellProvider where Cell: MagazineCell {
-    return dequeued(identifier: String(describing: cellClass), { cell, indexPath in
+  public static func reusable<Cell>(_ cellClass: Cell.Type, handler: @escaping (Cell, IndexPath) -> Void) -> ItemCellProvider where Cell: MagazineCell {
+    return reusable(identifier: String(describing: cellClass), { cell, indexPath in
       handler(cell as! Cell, indexPath)
     })
   }
