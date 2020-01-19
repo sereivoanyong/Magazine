@@ -7,26 +7,42 @@
 import UIKit
 import MagazineLayout
 
-public class Magazine: NSObject {
+open class Magazine: NSObject {
   
-  public var sections: [SectionController] 
+  weak open var overridingDelegate: UICollectionViewDelegate?
+  
+  open var sections: [SectionController]
   
   public init(_ sections: SectionController...) {
     self.sections = sections
+  }
+  
+  open override func responds(to selector: Selector) -> Bool {
+    if let delegate = overridingDelegate, delegate.responds(to: selector) {
+      return true
+    }
+    return super.responds(to: selector)
+  }
+  
+  open override func forwardingTarget(for selector: Selector!) -> Any? {
+    if let delegate = overridingDelegate, delegate.responds(to: selector) {
+      return delegate
+    }
+    return super.forwardingTarget(for: selector)
   }
 }
 
 extension Magazine: UICollectionViewDataSource {
   
-  public func numberOfSections(in collectionView: UICollectionView) -> Int {
+  open func numberOfSections(in collectionView: UICollectionView) -> Int {
     return sections.count
   }
   
-  public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+  open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return sections[section].items.count
   }
   
-  public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+  open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let controller = sections[indexPath.section].items[indexPath.item]
     switch controller.cellProvider {
     case .staticCell(let cell):
@@ -42,7 +58,7 @@ extension Magazine: UICollectionViewDataSource {
     }
   }
   
-  public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+  open func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
     let section = sections[indexPath.section]
     
     switch kind {
