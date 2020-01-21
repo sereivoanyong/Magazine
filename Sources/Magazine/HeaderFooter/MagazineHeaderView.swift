@@ -33,9 +33,10 @@ open class MagazineHeaderView: MagazineLayoutCollectionReusableView {
     set { titleLabel.text = newValue; setNeedsConstraintsUpdate() }
   }
   
-  open var accessoryView: UIView? {
+  /// The view that is right-aligned to `layoutMarginsGuide` and center-vertically-aligned to `titleLabel`
+  open var rightView: UIView? {
     didSet {
-      accessoryViewDidChange(from: oldValue)
+      rightViewDidChange(from: oldValue)
     }
   }
   
@@ -45,7 +46,7 @@ open class MagazineHeaderView: MagazineLayoutCollectionReusableView {
     preservesSuperviewLayoutMargins = true
     addSubview(titleLabel)
     
-    fixedHeightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 14)
+    fixedHeightConstraint = heightAnchor.constraint(equalToConstant: 14)
     titleBottomConstraint = bottomAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4)
     NSLayoutConstraint.activate([
       fixedHeightConstraint,
@@ -71,20 +72,20 @@ open class MagazineHeaderView: MagazineLayoutCollectionReusableView {
     }
   }
   
-  private func accessoryViewDidChange(from oldValue: UIView?) {
-    guard accessoryView !== oldValue else {
+  private func rightViewDidChange(from oldValue: UIView?) {
+    guard rightView !== oldValue else {
       return
     }
-    guard let accessoryView = accessoryView else {
+    guard let rightView = rightView else {
       oldValue?.removeFromSuperview()
       return
     }
-    precondition(!accessoryView.translatesAutoresizingMaskIntoConstraints && title != nil)
-    addSubview(accessoryView)
+    precondition(!rightView.translatesAutoresizingMaskIntoConstraints && title != nil)
+    addSubview(rightView)
     
     NSLayoutConstraint.activate([
-      accessoryView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-      layoutMarginsGuide.rightAnchor.constraint(equalTo: accessoryView.rightAnchor),
+      rightView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
+      layoutMarginsGuide.rightAnchor.constraint(equalTo: rightView.rightAnchor),
     ])
   }
 }

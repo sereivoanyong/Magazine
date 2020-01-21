@@ -13,6 +13,9 @@ open class Magazine: NSObject {
   
   open var sections: [SectionController]
   
+  open var horizontalSpacing: CGFloat = 0
+  open var verticalSpacing: CGFloat = 0
+  
   public init(_ sections: SectionController...) {
     self.sections = sections
   }
@@ -65,33 +68,67 @@ extension Magazine: UICollectionViewDataSource {
     case MagazineLayout.SupplementaryViewKind.sectionHeader:
       let controller = section.header!
       switch controller.viewProvider {
-      case .static(let headerView):
-        return headerView
-      case .dequeued(let identifier, let handler):
+      case .reusable(let identifier, let handler):
         let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MagazineLayoutCollectionReusableView
         handler(headerView, indexPath.section)
+        return headerView
+        
+      case .static(let headerView):
+        return headerView
+        
+      case .default(let identifier, let title, let rightView, let handler):
+        if let headerView = controller.defaultHeaderView {
+          return headerView
+        }
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MagazineHeaderView
+        headerView.title = title
+        headerView.rightView = rightView
+        handler?(headerView)
+        sections[indexPath.section].header!.defaultHeaderView = headerView
         return headerView
       }
       
     case MagazineLayout.SupplementaryViewKind.sectionFooter:
       let controller = section.footer!
       switch controller.viewProvider {
-      case .static(let footerView):
-        return footerView
-      case .dequeued(let identifier, let handler):
+      case .reusable(let identifier, let handler):
         let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MagazineLayoutCollectionReusableView
         handler(headerView, indexPath.section)
         return headerView
+      
+      case .static(let footerView):
+        return footerView
+      
+      case .default(let identifier, _, let isSeparatorHidden, let handler):
+        if let footerView = controller.defaultFooterView {
+          return footerView
+        }
+        let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MagazineFooterView
+        // footerView.text = text
+        footerView.separatorView.isHidden = isSeparatorHidden
+        handler?(footerView)
+        sections[indexPath.section].footer!.defaultFooterView = footerView
+        return footerView
       }
       
     case MagazineLayout.SupplementaryViewKind.sectionBackground:
       let controller = section.background!
       switch controller.viewProvider {
-      case .static(let backgroundView):
-        return backgroundView
-      case .dequeued(let identifier, let handler):
+      case .reusable(let identifier, let handler):
         let backgroundView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MagazineLayoutCollectionReusableView
         handler(backgroundView, indexPath.section)
+        return backgroundView
+        
+      case .static(let backgroundView):
+        return backgroundView
+        
+      case .default(let identifier, let handler):
+        if let backgroundView = controller.defaultBackgroundView {
+          return backgroundView
+        }
+        let backgroundView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: identifier, for: indexPath) as! MagazineLayoutCollectionReusableView
+        handler(backgroundView)
+        sections[indexPath.section].background!.defaultBackgroundView = backgroundView
         return backgroundView
       }
       
@@ -120,11 +157,11 @@ extension Magazine: UICollectionViewDelegateMagazineLayout {
   }
   
   open func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, horizontalSpacingForItemsInSectionAtIndex index: Int) -> CGFloat {
-    return sections[index].horizontalSpacing
+    return sections[index].horizontalSpacing ?? horizontalSpacing
   }
   
   open func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, verticalSpacingForElementsInSectionAtIndex index: Int) -> CGFloat {
-    return sections[index].verticalSpacing
+    return sections[index].verticalSpacing ?? verticalSpacing
   }
   
   open func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetsForSectionAtIndex index: Int) -> UIEdgeInsets {
