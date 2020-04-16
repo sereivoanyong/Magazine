@@ -11,7 +11,11 @@ open class MagazineViewController: UIViewController {
   
   lazy open private(set) var collectionView: UICollectionView = {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: MagazineLayout())
-    collectionView.backgroundColor = .clear
+    if #available(iOS 13.0, *) {
+      collectionView.backgroundColor = .systemBackground
+    } else {
+      collectionView.backgroundColor = .white
+    }
     collectionView.alwaysBounceHorizontal = false
     collectionView.alwaysBounceVertical = true
     collectionView.showsHorizontalScrollIndicator = false
