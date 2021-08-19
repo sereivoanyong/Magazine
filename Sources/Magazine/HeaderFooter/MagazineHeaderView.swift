@@ -72,12 +72,12 @@ open class MagazineHeaderView: MagazineLayoutCollectionReusableView {
     }
   }
   
-  private func rightViewDidChange(from oldValue: UIView?) {
-    guard rightView !== oldValue else {
+  private func rightViewDidChange(from oldRightView: UIView?) {
+    guard rightView !== oldRightView else {
       return
     }
+    oldRightView?.removeFromSuperview()
     guard let rightView = rightView else {
-      oldValue?.removeFromSuperview()
       return
     }
     precondition(!rightView.translatesAutoresizingMaskIntoConstraints && title != nil)
