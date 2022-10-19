@@ -1,16 +1,14 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "MagazineLayout",
-        "repositoryURL": "https://github.com/airbnb/MagazineLayout",
-        "state": {
-          "branch": null,
-          "revision": "6f88742c282de208e48cb738a7a14b7dc2651701",
-          "version": "1.6.3"
-        }
+  "pins" : [
+    {
+      "identity" : "magazinelayout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/MagazineLayout",
+      "state" : {
+        "revision" : "8cb3e72038b056317c8402d9ad52fb1c7dbd68db",
+        "version" : "1.6.11"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 2
 }
