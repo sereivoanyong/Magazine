@@ -10,12 +10,8 @@ import MagazineLayout
 open class MagazineViewController: UIViewController {
   
   lazy open private(set) var collectionView: UICollectionView = {
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: MagazineLayout())
-    if #available(iOS 13.0, *) {
-      collectionView.backgroundColor = .systemBackground
-    } else {
-      collectionView.backgroundColor = .white
-    }
+    let collectionView = UICollectionView(frame: UIScreen.main.bounds, collectionViewLayout: MagazineLayout())
+    collectionView.backgroundColor = .clear
     collectionView.alwaysBounceHorizontal = false
     collectionView.alwaysBounceVertical = true
     collectionView.showsHorizontalScrollIndicator = false
